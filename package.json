@@ -1,0 +1,15 @@
+{
+	"name": "mabakotarot",
+	"version": "1.0.0",
+	"description": "An app which is an archive of news headlines. ",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "Kosta Kirov",
+	"license": "ISC",
+	"dependencies": {
+		"puppeteer": "^9.1.1",
+		"puppeteer-extra-plugin-adblocker": "^2.11.11"
+	}
+}
