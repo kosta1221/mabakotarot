@@ -7,7 +7,7 @@ const s3 = new AWS.S3({
 	secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
 });
 
-const uploadFile = (filePath, s3Path) => {
+const uploadFile = async (filePath, s3Path) => {
 	// Read content from the file
 	const fileContent = fs.readFileSync(filePath);
 
@@ -18,12 +18,19 @@ const uploadFile = (filePath, s3Path) => {
 		Body: fileContent,
 	};
 
-	// Uploading files to the bucket
-	s3.upload(params, function (err, data) {
-		if (err) {
-			throw err;
+	return new Promise(async (resolve, reject) => {
+		try {
+			// Uploading files to the bucket
+			s3.upload(params, function (err, data) {
+				if (err) {
+					throw err;
+				}
+				console.log(`File uploaded successfully. ${data.Location}`);
+				resolve(data.Location);
+			});
+		} catch (error) {
+			reject(error);
 		}
-		console.log(`File uploaded successfully. ${data.Location}`);
 	});
 };
 
