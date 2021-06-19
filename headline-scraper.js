@@ -28,7 +28,11 @@ const scrapeHeadline = async () => {
 
 	await connectToMongo();
 
-	await Promise.all(scrapePromises(browser, n12, ynet));
+	const newHeadlines = await Promise.all(scrapePromises(browser, n12, ynet));
+	const foundHeadlineDocs = newHeadlines.filter((headline) => headline.found);
+	const notFoundHeadlineDocs = newHeadlines.filter((headline) => !headline.found);
+	console.log("Number of already existing headline docs in DB: ", foundHeadlineDocs.length);
+	console.log("Number of new headline docs in DB: ", notFoundHeadlineDocs.length);
 
 	await browser.close();
 	await disconnectFromMongo();
@@ -51,9 +55,16 @@ const scrapePromises = (browser, ...sites) => {
 					});
 
 					const s3Url = await uploadFileToS3(path, path.slice(12));
-					await Headline.create({ imageUrl: s3Url });
 
-					resolve();
+					const foundHeadline = await Headline.findOne({
+						imageUrl: s3Url,
+					});
+					if (!foundHeadline) {
+						const newHeadline = await Headline.create({ imageUrl: s3Url });
+						resolve({ ...newHeadline, found: false });
+					} else {
+						resolve({ ...foundHeadline, found: true });
+					}
 				} catch (error) {
 					reject(error);
 				}
