@@ -1,4 +1,6 @@
 const puppeteer = require("puppeteer-extra");
+const uploadFileToS3 = require("./upload-to-s3");
+const getRoundedDownDateByMinutesInterval = require("./screenshot-date-format");
 
 const AdblockerPlugin = require("puppeteer-extra-plugin-adblocker");
 puppeteer.use(AdblockerPlugin());
@@ -34,7 +36,9 @@ const scrapePromises = (browser, ...sites) => {
 				try {
 					const page = await browser.newPage();
 					await page.goto(site.url, { waitUntil: "networkidle0" });
-					await page.screenshot({ path: `./headlines/${site.folder}/screenshot.png` });
+					await page.screenshot({
+						path: `./headlines/${site.folder}/${getRoundedDownDateByMinutesInterval(15)}.png`,
+					});
 					resolve();
 				} catch (error) {
 					reject(error);
