@@ -57,13 +57,13 @@ const scrapePromises = (browser, ...sites) => {
 						path,
 					});
 
-					const s3Url = await uploadFileToS3(path, path.slice(12));
-
 					const foundHeadline = await Headline.findOne({
-						imageUrl: s3Url,
+						fileName: fileNameBasedOnDate,
+						site: site.folder,
 					});
 
 					if (!foundHeadline) {
+						const s3Url = await uploadFileToS3(path, path.slice(12));
 						const newHeadline = await Headline.create({
 							imageUrl: s3Url,
 							fileName: fileNameBasedOnDate,
