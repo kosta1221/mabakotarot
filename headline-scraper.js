@@ -1,3 +1,4 @@
+require("dotenv").config();
 const puppeteer = require("puppeteer-extra");
 const uploadFileToS3 = require("./upload-to-s3");
 const getRoundedDownDateByMinutesInterval = require("./screenshot-date-format");
@@ -37,7 +38,9 @@ const scrapePromises = (browser, ...sites) => {
 					const page = await browser.newPage();
 					await page.goto(site.url, { waitUntil: "networkidle0" });
 					await page.screenshot({
-						path: `./headlines/${site.folder}/${getRoundedDownDateByMinutesInterval(15)}.png`,
+						path: `./headlines/${site.folder}/${getRoundedDownDateByMinutesInterval(
+							process.env.DESIRED_INTERVAL
+						)}.png`,
 					});
 					resolve();
 				} catch (error) {
