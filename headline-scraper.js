@@ -47,9 +47,12 @@ const scrapePromises = (browser, ...sites) => {
 					const page = await browser.newPage();
 					await page.goto(site.url, { waitUntil: "networkidle0" });
 
-					const path = `./headlines/${site.folder}/${getRoundedDownDateByMinutesInterval(
+					const roundedDownDateByMinutesInterval = getRoundedDownDateByMinutesInterval(
 						process.env.DESIRED_INTERVAL
-					)}.png`;
+					);
+					const fileNameBasedOnDate = roundedDownDateByMinutesInterval.toFormat("yyyy-MM-dd_HH-mm");
+					const dateForDb = roundedDownDateByMinutesInterval.toFormat("yyyy-MM-dd HH:mm");
+					const path = `./headlines/${site.folder}/${fileNameBasedOnDate}.png`;
 					await page.screenshot({
 						path,
 					});
@@ -59,8 +62,14 @@ const scrapePromises = (browser, ...sites) => {
 					const foundHeadline = await Headline.findOne({
 						imageUrl: s3Url,
 					});
+
 					if (!foundHeadline) {
-						const newHeadline = await Headline.create({ imageUrl: s3Url });
+						const newHeadline = await Headline.create({
+							imageUrl: s3Url,
+							fileName: fileNameBasedOnDate,
+							date: dateForDb,
+							site: site.folder,
+						});
 						resolve({ ...newHeadline, found: false });
 					} else {
 						resolve({ ...foundHeadline, found: true });

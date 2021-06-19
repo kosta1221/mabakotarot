@@ -1,6 +1,18 @@
 const mongoose = require("mongoose");
 
 const headlineSchema = new mongoose.Schema({
+	site: {
+		type: String,
+		required: true,
+	},
+	date: {
+		type: String,
+		required: true,
+	},
+	fileName: {
+		type: String,
+		required: true,
+	},
 	imageUrl: {
 		type: String,
 		required: true,
