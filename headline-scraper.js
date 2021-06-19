@@ -1,6 +1,8 @@
 require("dotenv").config();
 const puppeteer = require("puppeteer-extra");
 const uploadFileToS3 = require("./upload-to-s3");
+const { connectToMongo, disconnectFromMongo } = require("./db/mongo-connection");
+const Headline = require("./db/models/Headline");
 const getRoundedDownDateByMinutesInterval = require("./screenshot-date-format");
 
 const AdblockerPlugin = require("puppeteer-extra-plugin-adblocker");
@@ -24,10 +26,13 @@ const scrapeHeadline = async () => {
 		slowMo: 50,
 	});
 
+	await connectToMongo();
+
 	await Promise.all(scrapePromises(browser, n12, ynet));
 
-	console.log("done, check screenshot");
 	await browser.close();
+	await disconnectFromMongo();
+	console.log("done, check database for new entries.");
 };
 
 const scrapePromises = (browser, ...sites) => {
@@ -37,11 +42,17 @@ const scrapePromises = (browser, ...sites) => {
 				try {
 					const page = await browser.newPage();
 					await page.goto(site.url, { waitUntil: "networkidle0" });
+
+					const path = `./headlines/${site.folder}/${getRoundedDownDateByMinutesInterval(
+						process.env.DESIRED_INTERVAL
+					)}.png`;
 					await page.screenshot({
-						path: `./headlines/${site.folder}/${getRoundedDownDateByMinutesInterval(
-							process.env.DESIRED_INTERVAL
-						)}.png`,
+						path,
 					});
+
+					const s3Url = await uploadFileToS3(path, path.slice(12));
+					await Headline.create({ imageUrl: s3Url });
+
 					resolve();
 				} catch (error) {
 					reject(error);
