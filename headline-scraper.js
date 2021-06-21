@@ -19,11 +19,13 @@ const ynet = {
 };
 
 const scrapeHeadline = async () => {
+	console.log("Launching in headless mode? -", process.env.IS_HEADLESS);
+
 	const browser = await puppeteer.launch({
-		headless: false,
-		defaultViewport: null,
+		headless: process.env.IS_HEADLESS === "false" ? false : true,
+		defaultViewport: process.env.IS_HEADLESS === "false" ? null : { width: 1536, height: 754 },
 		args: ["--disable-web-security", "--start-maximized"],
-		slowMo: 50,
+		slowMo: process.env.IS_HEADLESS === "false" ? 50 : 0,
 	});
 
 	await connectToMongo();
@@ -45,7 +47,7 @@ const scrapePromises = (browser, ...sites) => {
 			new Promise(async (resolve, reject) => {
 				try {
 					const page = await browser.newPage();
-					await page.goto(site.url, { waitUntil: "networkidle0" });
+					await page.goto(site.url, { waitUntil: "networkidle0", timeout: 0 });
 
 					const roundedDownDateByMinutesInterval = getRoundedDownDateByMinutesInterval(
 						process.env.DESIRED_INTERVAL
