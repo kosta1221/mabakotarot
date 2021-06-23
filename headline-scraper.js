@@ -47,7 +47,48 @@ const scrapePromises = (browser, ...sites) => {
 			new Promise(async (resolve, reject) => {
 				try {
 					const page = await browser.newPage();
-					await page.goto(site.url, { waitUntil: "networkidle0", timeout: 0 });
+					await page.goto(site.url, { waitUntil: ["networkidle0", "load"], timeout: 0 });
+
+					switch (site.folder) {
+						case "n12": {
+							const titleText = await page.$eval(".has-caption > strong > a", (el) => el.innerText);
+							console.log("n12 title: ", titleText);
+
+							const subTitleText = await page.$eval(
+								".has-caption > span > a",
+								(el) => el.innerText
+							);
+							console.log("n12 sub title: ", subTitleText);
+
+							const titleArticleLink = await page.$eval(".has-caption > strong > a", (el) =>
+								el.getAttribute("href")
+							);
+							console.log(titleArticleLink);
+
+							break;
+						}
+
+						case "ynet": {
+							const titleText = await page.$eval(".slotTitle > a > span", (el) => el.innerText);
+							console.log(titleText);
+
+							const subTitleText = await page.$eval(
+								".slotSubTitle > a > span",
+								(el) => el.innerText
+							);
+							console.log(subTitleText);
+
+							const titleArticleLink = await page.$eval(".slotTitle > a", (el) =>
+								el.getAttribute("href")
+							);
+							console.log(titleArticleLink);
+
+							break;
+						}
+
+						default:
+							break;
+					}
 
 					const roundedDownDateByMinutesInterval = getRoundedDownDateByMinutesInterval(
 						process.env.DESIRED_INTERVAL
