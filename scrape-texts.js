@@ -8,12 +8,12 @@ const scrapeTextsFromSite = async (site, page) => {
 			const titleArticleLink = await page.$eval(".has-caption > strong > a", (el) =>
 				el.getAttribute("href")
 			);
-			console.log(titleArticleLink);
+			const checkedArticleLink = checkIfFullLink(titleArticleLink, site.url);
 
 			return {
 				titleText,
 				subTitleText,
-				titleArticleLink,
+				titleArticleLink: checkedArticleLink,
 			};
 		}
 
@@ -23,17 +23,25 @@ const scrapeTextsFromSite = async (site, page) => {
 			const subTitleText = await page.$eval(".slotSubTitle > a > span", (el) => el.innerText);
 
 			const titleArticleLink = await page.$eval(".slotTitle > a", (el) => el.getAttribute("href"));
+			const checkedArticleLink = checkIfFullLink(titleArticleLink, site.url);
 
 			return {
 				titleText,
 				subTitleText,
-				titleArticleLink,
+				titleArticleLink: checkedArticleLink,
 			};
 		}
 
 		default:
 			return null;
 	}
+};
+
+const checkIfFullLink = (linkToCheck, siteUrl) => {
+	if (!linkToCheck.includes(siteUrl)) {
+		return `${siteUrl}${linkToCheck}`;
+	}
+	return linkToCheck;
 };
 
 module.exports = scrapeTextsFromSite;
