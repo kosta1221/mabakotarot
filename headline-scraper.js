@@ -6,18 +6,10 @@ const Headline = require("./db/models/Headline");
 const getRoundedDownDateByMinutesInterval = require("./screenshot-date-format");
 const scrapeTextsFromSite = require("./scrape-texts");
 
+const { n12, ynet } = require("./sites/index");
+
 const AdblockerPlugin = require("puppeteer-extra-plugin-adblocker");
 puppeteer.use(AdblockerPlugin());
-
-const n12 = {
-	url: "https://www.n12.co.il/",
-	folder: "n12",
-};
-
-const ynet = {
-	url: "https://www.ynet.co.il",
-	folder: "ynet",
-};
 
 const scrapeHeadline = async () => {
 	console.log("Launching in headless mode? -", process.env.IS_HEADLESS);
