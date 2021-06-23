@@ -1,9 +1,15 @@
 const scrapeTextsFromSite = async (site, page) => {
-	const titleText = await page.$eval(site.titleSelector, (el) => el.innerText);
+	const titleTextPromise = page.$eval(site.titleSelector, (el) => el.innerText);
 
-	const subtitleText = await page.$eval(site.subtitleSelector, (el) => el.innerText);
+	const subtitleTextPromise = page.$eval(site.subtitleSelector, (el) => el.innerText);
 
-	const link = await page.$eval(site.titleArticleLinkSelector, (el) => el.getAttribute("href"));
+	const linkPromise = page.$eval(site.titleArticleLinkSelector, (el) => el.getAttribute("href"));
+
+	const [titleText, subtitleText, link] = await Promise.all([
+		titleTextPromise,
+		subtitleTextPromise,
+		linkPromise,
+	]);
 	const titleArticleLink = checkIfFullLink(link, site.url);
 
 	return {
