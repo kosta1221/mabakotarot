@@ -1,40 +1,16 @@
 const scrapeTextsFromSite = async (site, page) => {
-	switch (site.folder) {
-		case "n12": {
-			const titleText = await page.$eval(".has-caption > strong > a", (el) => el.innerText);
+	const titleText = await page.$eval(site.titleSelector, (el) => el.innerText);
 
-			const subTitleText = await page.$eval(".has-caption > span > a", (el) => el.innerText);
+	const subtitleText = await page.$eval(site.subtitleSelector, (el) => el.innerText);
 
-			const titleArticleLink = await page.$eval(".has-caption > strong > a", (el) =>
-				el.getAttribute("href")
-			);
-			const checkedArticleLink = checkIfFullLink(titleArticleLink, site.url);
+	const link = await page.$eval(site.titleArticleLinkSelector, (el) => el.getAttribute("href"));
+	const titleArticleLink = checkIfFullLink(link, site.url);
 
-			return {
-				titleText,
-				subTitleText,
-				titleArticleLink: checkedArticleLink,
-			};
-		}
-
-		case "ynet": {
-			const titleText = await page.$eval(".slotTitle > a > span", (el) => el.innerText);
-
-			const subTitleText = await page.$eval(".slotSubTitle > a > span", (el) => el.innerText);
-
-			const titleArticleLink = await page.$eval(".slotTitle > a", (el) => el.getAttribute("href"));
-			const checkedArticleLink = checkIfFullLink(titleArticleLink, site.url);
-
-			return {
-				titleText,
-				subTitleText,
-				titleArticleLink: checkedArticleLink,
-			};
-		}
-
-		default:
-			return null;
-	}
+	return {
+		titleText,
+		subtitleText,
+		titleArticleLink,
+	};
 };
 
 const checkIfFullLink = (linkToCheck, siteUrl) => {
