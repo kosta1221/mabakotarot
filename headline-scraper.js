@@ -4,6 +4,7 @@ const uploadFileToS3 = require("./upload-to-s3");
 const { connectToMongo, disconnectFromMongo } = require("./db/mongo-connection");
 const Headline = require("./db/models/Headline");
 const getRoundedDownDateByMinutesInterval = require("./screenshot-date-format");
+const scrapeTextsFromSite = require("./scrape-texts");
 
 const AdblockerPlugin = require("puppeteer-extra-plugin-adblocker");
 puppeteer.use(AdblockerPlugin());
@@ -49,46 +50,7 @@ const scrapePromises = (browser, ...sites) => {
 					const page = await browser.newPage();
 					await page.goto(site.url, { waitUntil: ["networkidle0", "load"], timeout: 0 });
 
-					switch (site.folder) {
-						case "n12": {
-							const titleText = await page.$eval(".has-caption > strong > a", (el) => el.innerText);
-							console.log("n12 title: ", titleText);
-
-							const subTitleText = await page.$eval(
-								".has-caption > span > a",
-								(el) => el.innerText
-							);
-							console.log("n12 sub title: ", subTitleText);
-
-							const titleArticleLink = await page.$eval(".has-caption > strong > a", (el) =>
-								el.getAttribute("href")
-							);
-							console.log(titleArticleLink);
-
-							break;
-						}
-
-						case "ynet": {
-							const titleText = await page.$eval(".slotTitle > a > span", (el) => el.innerText);
-							console.log(titleText);
-
-							const subTitleText = await page.$eval(
-								".slotSubTitle > a > span",
-								(el) => el.innerText
-							);
-							console.log(subTitleText);
-
-							const titleArticleLink = await page.$eval(".slotTitle > a", (el) =>
-								el.getAttribute("href")
-							);
-							console.log(titleArticleLink);
-
-							break;
-						}
-
-						default:
-							break;
-					}
+					const scrapedTextsFromSite = await scrapeTextsFromSite(site, page);
 
 					const roundedDownDateByMinutesInterval = getRoundedDownDateByMinutesInterval(
 						process.env.DESIRED_INTERVAL
@@ -112,6 +74,7 @@ const scrapePromises = (browser, ...sites) => {
 							fileName: fileNameBasedOnDate,
 							date: dateForDb,
 							site: site.folder,
+							...scrapedTextsFromSite,
 						});
 						resolve({ ...newHeadline, found: false });
 					} else {

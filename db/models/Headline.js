@@ -17,6 +17,18 @@ const headlineSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
+	titleText: {
+		type: String,
+		required: false,
+	},
+	subTitleText: {
+		type: String,
+		required: false,
+	},
+	titleArticleLink: {
+		type: String,
+		required: false,
+	},
 });
 
 headlineSchema.set("toJSON", {
