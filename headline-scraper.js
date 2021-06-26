@@ -42,7 +42,13 @@ const scrapePromises = (browser, ...sites) => {
 					const page = await browser.newPage();
 					await page.goto(site.url, { waitUntil: ["networkidle0", "load"], timeout: 0 });
 
-					const scrapedTextsFromSite = await scrapeTextsFromSite(site, page);
+					let scrapedTextsFromSite;
+					try {
+						scrapedTextsFromSite = await scrapeTextsFromSite(site, page);
+					} catch (error) {
+						console.log(`No texts scraped from: ${site.folder}`);
+						console.log(error);
+					}
 
 					const roundedDownDateByMinutesInterval = getRoundedDownDateByMinutesInterval(
 						process.env.DESIRED_INTERVAL
