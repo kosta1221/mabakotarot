@@ -1,6 +1,6 @@
 require("dotenv").config();
 const puppeteer = require("puppeteer-extra");
-const uploadFileToS3 = require("./upload-to-s3");
+const { uploadFileToS3 } = require("./s3/utils");
 const {
   connectToMongo,
   disconnectFromMongo,
