@@ -1,7 +1,6 @@
 require("dotenv").config();
 const puppeteer = require("puppeteer-extra");
 const uploadFileToS3 = require("./upload-to-s3");
-const compressImage = require("./compress-images");
 const {
   connectToMongo,
   disconnectFromMongo,
@@ -83,11 +82,8 @@ const scrapePromises = (browser, ...sites) => {
           });
 
           if (!foundHeadline) {
-            await compressImage(path, site.folder, fileNameBasedOnDate);
-            const S3URL = await uploadFileToS3(
-              path.replace("png", "webp"),
-              path.replace("png", "webp").slice(12)
-            );
+            const S3URL = await uploadFileToS3(path, path.slice(12).replace("png", "webp"));
+
             const newHeadline = await Headline.create({
               imageUrl: S3URL,
               fileName: fileNameBasedOnDate,
@@ -95,6 +91,7 @@ const scrapePromises = (browser, ...sites) => {
               site: site.folder,
               ...scrapedTextsFromSite,
             });
+
             resolve({ ...newHeadline, found: false });
           } else {
             resolve({ ...foundHeadline, found: true });
