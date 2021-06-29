@@ -21,7 +21,11 @@ const connectToMongo = async () => {
 
 const disconnectFromMongo = async () => {
 	console.log("disconnecting from mongoDB...");
-	await mongoose.disconnect();
+	try {
+		await mongoose.disconnect();
+	} catch (error) {
+		throw error;
+	}
 };
 
 module.exports = { connectToMongo, disconnectFromMongo };

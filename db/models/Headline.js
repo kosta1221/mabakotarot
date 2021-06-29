@@ -21,7 +21,7 @@ const headlineSchema = new mongoose.Schema({
 		type: String,
 		required: false,
 	},
-	subTitleText: {
+	subtitleText: {
 		type: String,
 		required: false,
 	},

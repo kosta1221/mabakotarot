@@ -1,40 +1,25 @@
+const retry = require("./utils/retry");
+
 const scrapeTextsFromSite = async (site, page) => {
-	switch (site.folder) {
-		case "n12": {
-			const titleText = await page.$eval(".has-caption > strong > a", (el) => el.innerText);
+	const titleTextPromise = retry(3, getTitleTextPromise, site, page);
 
-			const subTitleText = await page.$eval(".has-caption > span > a", (el) => el.innerText);
+	const subtitleTextPromise = retry(3, getSubtitleTextPromise, site, page);
 
-			const titleArticleLink = await page.$eval(".has-caption > strong > a", (el) =>
-				el.getAttribute("href")
-			);
-			const checkedArticleLink = checkIfFullLink(titleArticleLink, site.url);
+	const linkPromise = retry(3, getLinkPromise, site, page);
 
-			return {
-				titleText,
-				subTitleText,
-				titleArticleLink: checkedArticleLink,
-			};
-		}
+	const [titleText, subtitleText, link] = await Promise.all([
+		titleTextPromise,
+		subtitleTextPromise,
+		linkPromise,
+	]);
 
-		case "ynet": {
-			const titleText = await page.$eval(".slotTitle > a > span", (el) => el.innerText);
+	const titleArticleLink = checkIfFullLink(link, site.url);
 
-			const subTitleText = await page.$eval(".slotSubTitle > a > span", (el) => el.innerText);
-
-			const titleArticleLink = await page.$eval(".slotTitle > a", (el) => el.getAttribute("href"));
-			const checkedArticleLink = checkIfFullLink(titleArticleLink, site.url);
-
-			return {
-				titleText,
-				subTitleText,
-				titleArticleLink: checkedArticleLink,
-			};
-		}
-
-		default:
-			return null;
-	}
+	return {
+		titleText,
+		subtitleText,
+		titleArticleLink,
+	};
 };
 
 const checkIfFullLink = (linkToCheck, siteUrl) => {
@@ -42,6 +27,18 @@ const checkIfFullLink = (linkToCheck, siteUrl) => {
 		return `${siteUrl}${linkToCheck}`;
 	}
 	return linkToCheck;
+};
+
+const getTitleTextPromise = (site, page) => {
+	return page.$eval(site.titleSelector, (el) => el.innerText);
+};
+
+const getSubtitleTextPromise = (site, page) => {
+	return page.$eval(site.subtitleSelector, (el) => el.innerText);
+};
+
+const getLinkPromise = (site, page) => {
+	return page.$eval(site.titleArticleLinkSelector, (el) => el.getAttribute("href"));
 };
 
 module.exports = scrapeTextsFromSite;
