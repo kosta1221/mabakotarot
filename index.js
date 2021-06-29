@@ -17,10 +17,18 @@ const main = async () => {
 	console.log("\x1b[36m%s\x1b[0m", "finished scraping headlines, trying to upload to s3 and db...");
 
 	const newHeadlines = await Promise.all(uploadToS3AndMongoPromises(scraperHeadlines));
-	console.log("\x1b[36m%s\x1b[0m", "finished uploading");
-
 	const foundHeadlineDocs = newHeadlines.filter((headline) => headline.found);
 	const notFoundHeadlineDocs = newHeadlines.filter((headline) => !headline.found);
+
+	console.log(
+		"\x1b[36m%s\x1b[0m",
+		`finished uploading phase, ${
+			notFoundHeadlineDocs.length > 0
+				? `uploaded ${notFoundHeadlineDocs.length} items`
+				: "no upload necessary."
+		}`
+	);
+
 	console.log("Number of already existing headline docs in DB: ", foundHeadlineDocs.length);
 	console.log("Number of new headline docs in DB: ", notFoundHeadlineDocs.length);
 
