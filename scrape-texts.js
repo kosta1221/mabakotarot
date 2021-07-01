@@ -1,11 +1,17 @@
-const retry = require("./utils/retry");
+const { retryWithTimeOut } = require("./utils/retry");
 
-const scrapeTextsFromSite = async (site, page) => {
-	const titleTextPromise = retry(3, getTitleTextPromise, site, page);
+const scrapeTextsFromSite = async (site, page, shouldRetry = false, numOfRetries = 1) => {
+	const titleTextPromise = shouldRetry
+		? retryWithTimeOut(3000, numOfRetries, getTitleTextPromise, site, page)
+		: getTitleTextPromise(site, page);
 
-	const subtitleTextPromise = retry(3, getSubtitleTextPromise, site, page);
+	const subtitleTextPromise = shouldRetry
+		? retryWithTimeOut(3000, numOfRetries, getSubtitleTextPromise, site, page)
+		: getSubtitleTextPromise(site, page);
 
-	const linkPromise = retry(3, getLinkPromise, site, page);
+	const linkPromise = shouldRetry
+		? retryWithTimeOut(3000, numOfRetries, getLinkPromise, site, page)
+		: getLinkPromise(site, page);
 
 	const [titleText, subtitleText, link] = await Promise.all([
 		titleTextPromise,
