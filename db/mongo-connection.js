@@ -4,7 +4,7 @@ const env = process.env.NODE_ENV || "production";
 const MONGO_URI = env === "test" ? process.env.TEST_MONGO_URI : process.env.MONGO_URI;
 
 const connectToMongo = async () => {
-	mongoose
+	await mongoose
 		.connect(MONGO_URI, {
 			useNewUrlParser: true,
 			useUnifiedTopology: true,
@@ -16,6 +16,7 @@ const connectToMongo = async () => {
 		})
 		.catch((error) => {
 			console.log("error connecting to MongoDB:", error.message);
+			throw error;
 		});
 };
 

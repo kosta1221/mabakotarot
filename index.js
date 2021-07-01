@@ -2,21 +2,45 @@ const { connectToMongo, disconnectFromMongo } = require("./db/mongo-connection")
 const { launchBrowser, closeBrowser } = require("./puppeteer/utils");
 const { n12, ynet } = require("./sites/index");
 
+const { retryWithTimeOut } = require("./utils/retry");
+
 const { scrapePromises, uploadToS3AndMongoPromises } = require("./utils/scraper-utils");
 
 const main = async () => {
 	console.log("Launching in headless mode? -", process.env.IS_HEADLESS);
 
-	const browser = await launchBrowser();
+	let browser;
+	try {
+		browser = await launchBrowser();
 
-	console.log("\x1b[36m%s\x1b[0m", "launched browser successfully.");
+		console.log("\x1b[36m%s\x1b[0m", "launched browser successfully.");
 
-	await connectToMongo();
+		await connectToMongo();
+	} catch (error) {
+		console.log("\x1b[31m%s\x1b[0m", "error in main: ", error);
+		throw error;
+	}
 
-	const scraperHeadlines = await Promise.all(scrapePromises(browser, n12, ynet));
-	console.log("\x1b[36m%s\x1b[0m", "finished scraping headlines, trying to upload to s3 and db...");
+	let scraperHeadlines;
+	try {
+		scraperHeadlines = await Promise.all(scrapePromises(browser, n12, ynet));
+		console.log(
+			"\x1b[36m%s\x1b[0m",
+			"finished scraping headlines, trying to upload to s3 and db..."
+		);
+	} catch (error) {
+		console.log("\x1b[31m%s\x1b[0m", "error in main: ", error);
+		throw error;
+	}
 
-	const newHeadlines = await Promise.all(uploadToS3AndMongoPromises(scraperHeadlines));
+	let newHeadlines;
+	try {
+		newHeadlines = await Promise.all(uploadToS3AndMongoPromises(scraperHeadlines));
+	} catch (error) {
+		console.log("\x1b[31m%s\x1b[0m", "error in main: ", error);
+		throw error;
+	}
+
 	const foundHeadlineDocs = newHeadlines.filter((headline) => headline.found);
 	const notFoundHeadlineDocs = newHeadlines.filter((headline) => !headline.found);
 
@@ -39,7 +63,7 @@ const main = async () => {
 		await disconnectFromMongo();
 	} catch (error) {
 		console.log("disconnect error");
-		console.log(error);
+		console.log("\x1b[31m%s\x1b[0m", "error in main: ", error);
 	}
 	console.log("\x1b[36m%s\x1b[0m", "disconnected from mongo successfully.");
 
@@ -53,4 +77,11 @@ const main = async () => {
 	);
 };
 
-main();
+(async () => {
+	try {
+		await retryWithTimeOut(5000, 3, main);
+	} catch (error) {
+		console.log("\x1b[31m%s\x1b[0m", "SCRIPT UNSUCCESSFULL, EXITING WITH CODE 1");
+		process.exit(1);
+	}
+})();
