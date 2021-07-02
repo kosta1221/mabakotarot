@@ -7,7 +7,9 @@ const getLastHeadlineOfSite = async (site) => {
 		site,
 	}).sort([["date", -1]]);
 
-	console.log(foundHeadline);
+	console.log(`last found headline of ${site}: ${foundHeadline.date}`);
+
+	return foundHeadline;
 };
 
 module.exports = { getLastHeadlineOfSite };

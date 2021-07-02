@@ -7,6 +7,8 @@ const { retry } = require("../utils/retry");
 const Headline = require("../db/models/Headline");
 const getRoundedDownDateByMinutesInterval = require("../screenshot-date-format");
 const scrapeTextsFromSite = require("../scrape-texts");
+const { getLastHeadlineOfSite } = require("../db/utils");
+const { getDiffFromUrlAndPath } = require("../image-diff");
 
 const scrapePromises = (browser, ...sites) => {
 	return sites.map((site) => {
@@ -92,4 +94,35 @@ const uploadToS3AndMongoPromises = (scrapedHeadlines) => {
 	);
 };
 
-module.exports = { scrapePromises, uploadToS3AndMongoPromises };
+const checkAreScrapedHeadlinesUnique = (scrapedHeadlines) => {
+	return scrapedHeadlines.map(
+		(scrapedHeadline) =>
+			new Promise(async (resolve, reject) => {
+				try {
+					let isTextUnique = true;
+
+					const lastFoundHeadlineOfSite = await getLastHeadlineOfSite(scrapedHeadline.site);
+
+					if (lastFoundHeadlineOfSite.titleText === scrapedHeadline.titleText) {
+						isTextUnique = false;
+					}
+
+					const { diffPercentage } = await getDiffFromUrlAndPath(
+						lastFoundHeadlineOfSite.imageUrl,
+						scrapedHeadline.path
+					);
+
+					console.log(
+						"\x1b[32m\x1b[40m%s\x1b[0m",
+						`${scrapedHeadline.site}/${scrapedHeadline.fileName}: is text unique? - ${isTextUnique}. Image diff to last headline of ${scrapedHeadline.site}: ${diffPercentage}`
+					);
+
+					resolve({ ...scrapedHeadline, isTextUnique, diffToLastOfSite: diffPercentage });
+				} catch (error) {
+					reject(error);
+				}
+			})
+	);
+};
+
+module.exports = { scrapePromises, uploadToS3AndMongoPromises, checkAreScrapedHeadlinesUnique };

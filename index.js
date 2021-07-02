@@ -5,7 +5,11 @@ const { n12, ynet } = require("./sites/index");
 
 const { retryWithTimeOut } = require("./utils/retry");
 
-const { scrapePromises, uploadToS3AndMongoPromises } = require("./utils/scraper-utils");
+const {
+	scrapePromises,
+	uploadToS3AndMongoPromises,
+	checkAreScrapedHeadlinesUnique,
+} = require("./utils/scraper-utils");
 
 const main = async () => {
 	console.log("Launching in headless mode? -", process.env.IS_HEADLESS);
@@ -27,7 +31,19 @@ const main = async () => {
 		scraperHeadlines = await Promise.all(scrapePromises(browser, n12, ynet));
 		console.log(
 			"\x1b[36m%s\x1b[0m",
-			"finished scraping headlines, trying to upload to s3 and db..."
+			"finished scraping headlines, trying to check scraped headlines' uniqueness..."
+		);
+	} catch (error) {
+		console.log("\x1b[31m%s\x1b[0m", "error in main: ", error);
+		throw error;
+	}
+
+	let scraperHeadlinesChecked;
+	try {
+		scraperHeadlinesChecked = await Promise.all(checkAreScrapedHeadlinesUnique(scraperHeadlines));
+		console.log(
+			"\x1b[36m%s\x1b[0m",
+			"finished checking scraped headlines' uniqueness, trying to upload to s3 and db..."
 		);
 	} catch (error) {
 		console.log("\x1b[31m%s\x1b[0m", "error in main: ", error);
@@ -36,7 +52,7 @@ const main = async () => {
 
 	let newHeadlines;
 	try {
-		newHeadlines = await Promise.all(uploadToS3AndMongoPromises(scraperHeadlines));
+		newHeadlines = await Promise.all(uploadToS3AndMongoPromises(scraperHeadlinesChecked));
 	} catch (error) {
 		console.log("\x1b[31m%s\x1b[0m", "error in main: ", error);
 		throw error;
