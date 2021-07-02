@@ -2,22 +2,46 @@ const fs = require("fs");
 const PNG = require("pngjs").PNG;
 const pixelmatch = require("pixelmatch");
 const sharp = require("sharp");
-
+const { DateTime } = require("luxon");
 const axios = require("axios");
 const sizeOf = require("buffer-image-size");
 
-const getDiff = async () => {
-	let url1 = "https://mabakotarot.s3.amazonaws.com/n12/2021-07-01_23-45.webp";
+const getDiff = async (options) => {
+	const { site1, site2, year1, month1, day1, hour1, minute1, year2, month2, day2, hour2, minute2 } =
+		options;
+
+	const dateTime1 = new DateTime(DateTime.local()).set({
+		hour: hour1,
+		minute: minute1,
+		day: day1,
+		month: month1,
+		year: year1,
+	});
+	const dateTime2 = new DateTime(DateTime.local()).set({
+		hour: hour2,
+		minute: minute2,
+		day: day2,
+		month: month2,
+		year: year2,
+	});
+
+	const fileName1 = dateTime1.toFormat("yyyy-MM-dd_HH-mm");
+	const fileName2 = dateTime2.toFormat("yyyy-MM-dd_HH-mm");
+	console.log(fileName1);
+	console.log(fileName2);
+
+	const s3Url1 = `https://mabakotarot.s3.amazonaws.com/${site1}/${fileName1}.webp`;
+	const s3Url2 = `https://mabakotarot.s3.amazonaws.com/${site2}/${fileName2}.webp`;
+
 	const { data: data1 } = await axios({
-		url: url1,
+		url: s3Url1,
 		method: "GET",
 		responseType: "arraybuffer",
 		responseEncoding: "binary",
 	});
 
-	let url2 = "https://mabakotarot.s3.amazonaws.com/n12/2021-07-01_21-15.webp";
 	const { data: data2 } = await axios({
-		url: url2,
+		url: s3Url2,
 		method: "GET",
 		responseType: "arraybuffer",
 		responseEncoding: "binary",
@@ -45,4 +69,13 @@ const getDiff = async () => {
 	fs.writeFileSync("headlines/diff/diff.png", PNG.sync.write(diff));
 };
 
-getDiff();
+getDiff({
+	site1: "n12",
+	site2: "ynet",
+	day1: 1,
+	hour1: 23,
+	minute1: 45,
+	day2: 1,
+	hour2: 23,
+	minute2: 30,
+});
