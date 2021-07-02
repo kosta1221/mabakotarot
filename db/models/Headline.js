@@ -29,6 +29,14 @@ const headlineSchema = new mongoose.Schema({
 		type: String,
 		required: false,
 	},
+	isTextUnique: {
+		type: String,
+		required: false,
+	},
+	diffToLastOfSite: {
+		type: Number,
+		required: false,
+	},
 });
 
 headlineSchema.set("toJSON", {
