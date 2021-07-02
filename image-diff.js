@@ -2,37 +2,11 @@ const fs = require("fs");
 const PNG = require("pngjs").PNG;
 const pixelmatch = require("pixelmatch");
 const sharp = require("sharp");
-const { DateTime } = require("luxon");
 const axios = require("axios");
+const { getFileNameFromOptions, getS3UrlFromSiteAndFileName } = require("./utils");
 const sizeOf = require("buffer-image-size");
 
-const getDiff = async (options) => {
-	const { site1, site2, year1, month1, day1, hour1, minute1, year2, month2, day2, hour2, minute2 } =
-		options;
-
-	const dateTime1 = new DateTime(DateTime.local()).set({
-		hour: hour1,
-		minute: minute1,
-		day: day1,
-		month: month1,
-		year: year1,
-	});
-	const dateTime2 = new DateTime(DateTime.local()).set({
-		hour: hour2,
-		minute: minute2,
-		day: day2,
-		month: month2,
-		year: year2,
-	});
-
-	const fileName1 = dateTime1.toFormat("yyyy-MM-dd_HH-mm");
-	const fileName2 = dateTime2.toFormat("yyyy-MM-dd_HH-mm");
-	console.log(fileName1);
-	console.log(fileName2);
-
-	const s3Url1 = `https://mabakotarot.s3.amazonaws.com/${site1}/${fileName1}.webp`;
-	const s3Url2 = `https://mabakotarot.s3.amazonaws.com/${site2}/${fileName2}.webp`;
-
+const getDiffFromUrl = async (s3Url1, s3Url2) => {
 	const { data: data1 } = await axios({
 		url: s3Url1,
 		method: "GET",
@@ -69,13 +43,10 @@ const getDiff = async (options) => {
 	fs.writeFileSync("headlines/diff/diff.png", PNG.sync.write(diff));
 };
 
-getDiff({
-	site1: "n12",
-	site2: "ynet",
-	day1: 1,
-	hour1: 23,
-	minute1: 45,
-	day2: 1,
-	hour2: 23,
-	minute2: 30,
-});
+const fileName1 = getFileNameFromOptions({ day: 1, hour: 23, minute: 45 });
+const fileName2 = getFileNameFromOptions({ day: 1, hour: 23, minute: 30 });
+
+const s3Url1 = getS3UrlFromSiteAndFileName("n12", fileName1);
+const s3Url2 = getS3UrlFromSiteAndFileName("ynet", fileName2);
+
+getDiffFromUrl(s3Url1, s3Url2);
