@@ -23,7 +23,15 @@ const haaretz = {
 	popUpSelector: '[data-test*="bottomStrip"] button svg',
 };
 
-module.exports = { n12, ynet, haaretz };
+const walla = {
+	url: "https://www.walla.co.il",
+	folder: "walla",
+	titleSelector: ".main-item > article > a > h2",
+	subtitleSelector: ".main-item > article > a > p",
+	titleArticleLinkSelector: ".main-item > article > a",
+};
+
+module.exports = { n12, ynet, haaretz, walla };
 
 // console.log(document.querySelector(".main1 > li > p > strong > a"));
 // ("main1 > li > p a");

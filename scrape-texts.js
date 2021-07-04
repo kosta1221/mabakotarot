@@ -29,6 +29,10 @@ const scrapeTextsFromSite = async (site, page, shouldRetry = false, numOfRetries
 };
 
 const checkIfFullLink = (linkToCheck, siteUrl) => {
+	if (siteUrl.includes("walla")) {
+		return linkToCheck;
+	}
+
 	if (!linkToCheck.includes(siteUrl)) {
 		return `${siteUrl}${linkToCheck}`;
 	}

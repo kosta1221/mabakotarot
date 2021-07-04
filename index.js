@@ -1,7 +1,7 @@
 require("dotenv").config();
 const { connectToMongo, disconnectFromMongo } = require("./db/mongo-connection");
 const { launchBrowser, closeBrowser } = require("./puppeteer/utils");
-const { n12, ynet, haaretz } = require("./sites/index");
+const { n12, ynet, haaretz, walla } = require("./sites/index");
 
 const { retryWithTimeOut } = require("./utils/retry");
 
@@ -28,7 +28,7 @@ const main = async () => {
 
 	let scraperHeadlines;
 	try {
-		scraperHeadlines = await Promise.all(scrapePromises(browser, haaretz, n12, ynet));
+		scraperHeadlines = await Promise.all(scrapePromises(browser, walla, haaretz, n12, ynet));
 		console.log(
 			"\x1b[36m%s\x1b[0m",
 			"finished scraping headlines, trying to check scraped headlines' uniqueness..."
