@@ -1,5 +1,5 @@
 require("dotenv").config();
-
+const fs = require("fs");
 const { uploadFileToS3 } = require("../s3/utils");
 
 const { retry } = require("../utils/retry");
@@ -29,7 +29,7 @@ const scrapePromiseForSite = async (browser, site) => {
 			try {
 				scrapedTextsFromSite = await scrapeTextsFromSite(site, page, true, 3);
 			} catch (error) {
-				console.log(`No texts scraped from: ${site.folder}`);
+				console.log("\x1b[31m%s\x1b[0m", `No texts scraped from: ${site.folder}`);
 				throw error;
 			}
 
@@ -92,8 +92,12 @@ const uploadToS3AndMongoPromises = (scrapedHeadlines) => {
 							titleArticleLink: scrapedHeadline.titleArticleLink,
 						});
 
+						fs.unlinkSync(scrapedHeadline.path);
+
 						resolve({ ...newHeadline, found: false });
 					} else {
+						fs.unlinkSync(scrapedHeadline.path);
+
 						resolve({ ...foundHeadline, found: true });
 					}
 				} catch (error) {
