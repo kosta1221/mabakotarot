@@ -92,7 +92,7 @@ const getDiffFromUrlAndPath = async (s3Url1, path2) => {
 	// console.log("diffNum: ", diffNum);
 	console.log("diffPercentage: ", diffPercentage);
 
-	fs.writeFileSync(`ignore/diff.png`, PNG.sync.write(diff));
+	fs.writeFileSync(`ignore/diff-${path2.split("/")[2]}.png`, PNG.sync.write(diff));
 
 	return { diffNum, diffPercentage, diff };
 };

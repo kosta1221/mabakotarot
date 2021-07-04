@@ -14,7 +14,15 @@ const ynet = {
 	titleArticleLinkSelector: ".slotTitle > a",
 };
 
-module.exports = { n12, ynet };
+const haaretz = {
+	url: "https://www.haaretz.co.il",
+	folder: "haaretz",
+	titleSelector: "article > div a > h1",
+	subtitleSelector: "article > div > p",
+	titleArticleLinkSelector: "article > div a",
+};
+
+module.exports = { n12, ynet, haaretz };
 
 // console.log(document.querySelector(".main1 > li > p > strong > a"));
 // ("main1 > li > p a");
