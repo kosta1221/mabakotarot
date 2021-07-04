@@ -103,21 +103,30 @@ const checkAreScrapedHeadlinesUnique = (scrapedHeadlines) => {
 
 					const lastFoundHeadlineOfSite = await getLastHeadlineOfSite(scrapedHeadline.site);
 
-					if (lastFoundHeadlineOfSite.titleText === scrapedHeadline.titleText) {
-						isTextUnique = false;
+					if (lastFoundHeadlineOfSite) {
+						if (lastFoundHeadlineOfSite.titleText === scrapedHeadline.titleText) {
+							isTextUnique = false;
+						}
+
+						const { diffPercentage } = await getDiffFromUrlAndPath(
+							lastFoundHeadlineOfSite.imageUrl,
+							scrapedHeadline.path
+						);
+
+						console.log(
+							"\x1b[32m\x1b[40m%s\x1b[0m",
+							`${scrapedHeadline.site}/${scrapedHeadline.fileName}: is text unique? - ${isTextUnique}. Image diff to last headline of ${scrapedHeadline.site}: ${diffPercentage}`
+						);
+
+						resolve({ ...scrapedHeadline, isTextUnique, diffToLastOfSite: diffPercentage });
+					} else {
+						console.log(
+							"\x1b[32m\x1b[40m%s\x1b[0m",
+							`${scrapedHeadline.site}/${scrapedHeadline.fileName}: is text unique? - ${isTextUnique}. Last headline of ${scrapedHeadline.site} not found.`
+						);
+
+						resolve({ ...scrapedHeadline, isTextUnique });
 					}
-
-					const { diffPercentage } = await getDiffFromUrlAndPath(
-						lastFoundHeadlineOfSite.imageUrl,
-						scrapedHeadline.path
-					);
-
-					console.log(
-						"\x1b[32m\x1b[40m%s\x1b[0m",
-						`${scrapedHeadline.site}/${scrapedHeadline.fileName}: is text unique? - ${isTextUnique}. Image diff to last headline of ${scrapedHeadline.site}: ${diffPercentage}`
-					);
-
-					resolve({ ...scrapedHeadline, isTextUnique, diffToLastOfSite: diffPercentage });
 				} catch (error) {
 					reject(error);
 				}
