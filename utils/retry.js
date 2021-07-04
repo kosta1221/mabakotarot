@@ -7,7 +7,7 @@ const retry = async (numOfRetries, funcToRetry, ...args) => {
 			throw err;
 		}
 		console.log(`number of retries left for ${funcToRetry.name}: `, numOfRetries - 1);
-		console.log(`retrying ${funcToRetry.name}...`);
+		console.log("\x1b[35m\x1b[0m", `retrying ${funcToRetry.name}...`);
 		return await retry(numOfRetries - 1, funcToRetry, ...args);
 	}
 };
@@ -34,7 +34,7 @@ const retryWithTimeOut = async (timeOutMs, numOfRetries, funcToRetry, ...args) =
 			}
 		});
 
-		console.log(`retrying ${funcToRetry.name}...`);
+		console.log("\x1b[35m\x1b[0m", `retrying ${funcToRetry.name}...`);
 		return retryWithTimeOut(timeOutMs, numOfRetries - 1, funcToRetry, ...args);
 	}
 };
