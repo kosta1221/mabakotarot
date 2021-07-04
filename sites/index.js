@@ -31,7 +31,15 @@ const walla = {
 	titleArticleLinkSelector: ".main-item > article > a",
 };
 
-module.exports = { n12, ynet, haaretz, walla };
+const israelhayom = {
+	url: "https://www.israelhayom.co.il/",
+	folder: "israelhayom",
+	titleSelector: ".post-content > h2",
+	subtitleSelector: ".post-content > strong",
+	titleArticleLinkSelector: ".post-content > h2 > a",
+};
+
+module.exports = { n12, ynet, haaretz, walla, israelhayom, news13 };
 
 // console.log(document.querySelector(".main1 > li > p > strong > a"));
 // ("main1 > li > p a");
