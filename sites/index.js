@@ -39,6 +39,14 @@ const israelhayom = {
 	titleArticleLinkSelector: ".post-content > h2 > a",
 };
 
+const news13 = {
+	url: "https://13news.co.il/",
+	folder: "news13",
+	titleSelector: ".about-title a",
+	subtitleSelector: ".about-description a",
+	titleArticleLinkSelector: ".about-title a",
+};
+
 module.exports = { n12, ynet, haaretz, walla, israelhayom, news13 };
 
 // console.log(document.querySelector(".main1 > li > p > strong > a"));
