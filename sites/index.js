@@ -20,6 +20,7 @@ const haaretz = {
 	titleSelector: "article > div a > h1",
 	subtitleSelector: "article > div > p",
 	titleArticleLinkSelector: "article > div a",
+	popUpSelector: '[data-test*="bottomStrip"] button svg',
 };
 
 module.exports = { n12, ynet, haaretz };

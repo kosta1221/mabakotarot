@@ -33,6 +33,15 @@ const scrapePromiseForSite = async (browser, site) => {
 				throw error;
 			}
 
+			if (site.folder === "haaretz") {
+				try {
+					await page.click(site.popUpSelector);
+				} catch (error) {
+					console.log(error);
+					console.log(`couldn't close popup on ${site.folder}, continuing without throwing...`);
+				}
+			}
+
 			const roundedDownDateByMinutesInterval = getRoundedDownDateByMinutesInterval(
 				process.env.DESIRED_INTERVAL
 			);
