@@ -66,37 +66,39 @@ const scrapePromiseForSite = async (browser, site) => {
 	});
 };
 
-const uploadToS3AndMongoPromises = (scrapedHeadlines) => {
-	return scrapedHeadlines.map(
-		(scrapedHeadline) =>
+const uploadToS3AndMongoPromises = (scrapedHeadlinesChecked) => {
+	return scrapedHeadlinesChecked.map(
+		(scrapedHeadlineChecked) =>
 			new Promise(async (resolve, reject) => {
 				try {
 					const foundHeadline = await Headline.findOne({
-						fileName: scrapedHeadline.fileName,
-						site: scrapedHeadline.site,
+						fileName: scrapedHeadlineChecked.fileName,
+						site: scrapedHeadlineChecked.site,
 					});
 
 					if (!foundHeadline) {
 						const S3URL = await uploadFileToS3(
-							scrapedHeadline.path,
-							scrapedHeadline.path.slice(12).replace("png", "webp")
+							scrapedHeadlineChecked.path,
+							scrapedHeadlineChecked.path.slice(12).replace("png", "webp")
 						);
 
 						const newHeadline = await Headline.create({
 							imageUrl: S3URL,
-							fileName: scrapedHeadline.fileName,
-							date: scrapedHeadline.date,
-							site: scrapedHeadline.site,
-							titleText: scrapedHeadline.titleText,
-							subtitleText: scrapedHeadline.subtitleText,
-							titleArticleLink: scrapedHeadline.titleArticleLink,
+							fileName: scrapedHeadlineChecked.fileName,
+							date: scrapedHeadlineChecked.date,
+							site: scrapedHeadlineChecked.site,
+							titleText: scrapedHeadlineChecked.titleText,
+							subtitleText: scrapedHeadlineChecked.subtitleText,
+							titleArticleLink: scrapedHeadlineChecked.titleArticleLink,
+							isTextUnique: scrapedHeadlineChecked.isTextUnique,
+							diffToLastOfSite: scrapedHeadlineChecked.diffToLastOfSite,
 						});
 
-						fs.unlinkSync(scrapedHeadline.path);
+						fs.unlinkSync(scrapedHeadlineChecked.path);
 
 						resolve({ ...newHeadline, found: false });
 					} else {
-						fs.unlinkSync(scrapedHeadline.path);
+						fs.unlinkSync(scrapedHeadlineChecked.path);
 
 						resolve({ ...foundHeadline, found: true });
 					}
