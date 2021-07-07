@@ -74,7 +74,8 @@ const main = async (browser, ...sites) => {
 	);
 };
 
-(async () => {
+exports.lambdaHandler = async (event) => {
+	console.log("event: ", event);
 	try {
 		console.log("Launching in headless mode? -", process.env.IS_HEADLESS);
 		const browser = await launchBrowser();
@@ -97,4 +98,4 @@ const main = async (browser, ...sites) => {
 		console.log("\x1b[31m%s\x1b[0m", "SCRIPT UNSUCCESSFULL, EXITING WITH CODE 1");
 		process.exit(1);
 	}
-})();
+};

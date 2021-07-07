@@ -98,13 +98,24 @@ const main = async (...sites) => {
 	);
 };
 
-(async () => {
-	try {
-		await retryWithTimeOut(5000, 3, main, walla, haaretz);
-		await retryWithTimeOut(5000, 3, main, n12, ynet);
-		await retryWithTimeOut(5000, 3, main, israelhayom, news13);
-	} catch (error) {
-		console.log("\x1b[31m%s\x1b[0m", "SCRIPT UNSUCCESSFULL, EXITING WITH CODE 1");
-		process.exit(1);
-	}
-})();
+// (async () => {
+// 	try {
+// 		await retryWithTimeOut(5000, 3, main, walla, haaretz);
+// 		await retryWithTimeOut(5000, 3, main, n12, ynet);
+// 		await retryWithTimeOut(5000, 3, main, israelhayom, news13);
+// 	} catch (error) {
+// 		console.log("\x1b[31m%s\x1b[0m", "SCRIPT UNSUCCESSFULL, EXITING WITH CODE 1");
+// 		process.exit(1);
+// 	}
+// })();
+
+// exports.lambdaHandler = async (event) => {
+// 	try {
+// 		await retryWithTimeOut(5000, 3, main, walla, haaretz);
+// 		await retryWithTimeOut(5000, 3, main, n12, ynet);
+// 		await retryWithTimeOut(5000, 3, main, israelhayom, news13);
+// 	} catch (error) {
+// 		console.log("\x1b[31m%s\x1b[0m", "SCRIPT UNSUCCESSFULL, EXITING WITH CODE 1");
+// 		process.exit(1);
+// 	}
+// };

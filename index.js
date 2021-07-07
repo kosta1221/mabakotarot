@@ -96,11 +96,20 @@ const main = async () => {
 	);
 };
 
-(async () => {
+// (async () => {
+// 	try {
+// 		await retryWithTimeOut(5000, 3, main);
+// 	} catch (error) {
+// 		console.log("\x1b[31m%s\x1b[0m", "SCRIPT UNSUCCESSFULL, EXITING WITH CODE 1");
+// 		process.exit(1);
+// 	}
+// })();
+
+exports.lambdaHandler = async (event) => {
 	try {
 		await retryWithTimeOut(5000, 3, main);
 	} catch (error) {
 		console.log("\x1b[31m%s\x1b[0m", "SCRIPT UNSUCCESSFULL, EXITING WITH CODE 1");
 		process.exit(1);
 	}
-})();
+};

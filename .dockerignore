@@ -2,3 +2,4 @@ node_modules/
 lib/
 headlines/
 ignore/
+*.zip
