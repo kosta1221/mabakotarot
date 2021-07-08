@@ -3,3 +3,4 @@ lib/
 headlines/
 ignore/
 *.zip
+tmp/

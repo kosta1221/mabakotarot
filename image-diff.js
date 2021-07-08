@@ -89,10 +89,9 @@ const getDiffFromUrlAndPath = async (s3Url1, path2) => {
 	const diffNum = pixelmatch(img1.data, img2.data, diff.data, width1, height1, { threshold: 0.1 });
 	const diffPercentage = (diffNum / (width1 * height1)) * 100;
 
-	// console.log("diffNum: ", diffNum);
 	console.log("diffPercentage: ", diffPercentage);
 
-	fs.writeFileSync(`ignore/diff-${path2.split("/")[2]}.png`, PNG.sync.write(diff));
+	fs.writeFileSync(`/tmp/diff-${path2.split("/")[2]}.png`, PNG.sync.write(diff));
 
 	return { diffNum, diffPercentage, diff };
 };

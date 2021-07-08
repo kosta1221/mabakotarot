@@ -78,7 +78,7 @@ exports.lambdaHandler = async (event) => {
 	console.log("event: ", event);
 	try {
 		console.log("Launching in headless mode? -", process.env.IS_HEADLESS);
-		const browser = await launchBrowser();
+		const browser = await retryWithTimeOut(5000, 5, launchBrowser);
 
 		console.log("\x1b[36m%s\x1b[0m", "launched browser successfully.");
 
