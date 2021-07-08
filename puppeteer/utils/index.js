@@ -1,14 +1,16 @@
 require("dotenv").config();
-const puppeteer = require("puppeteer-extra");
+const chromium = require("chrome-aws-lambda");
+const { addExtra } = require("puppeteer-extra");
+const puppeteerExtra = addExtra(chromium.puppeteer);
 const AdblockerPlugin = require("puppeteer-extra-plugin-adblocker");
-puppeteer.use(AdblockerPlugin());
+puppeteerExtra.use(AdblockerPlugin());
 
 const launchBrowser = async () => {
-	const browser = await puppeteer.launch({
-		headless: process.env.IS_HEADLESS === "false" ? false : true,
-		defaultViewport: process.env.IS_HEADLESS === "false" ? null : { width: 1536, height: 754 },
-		args: ["--disable-web-security", "--start-maximized", "--no-sandbox"],
-		slowMo: process.env.IS_HEADLESS === "false" ? 50 : 0,
+	const browser = await puppeteerExtra.launch({
+		args: chromium.args,
+		defaultViewport: { width: 1536, height: 754 },
+		executablePath: await chromium.executablePath,
+		headless: chromium.headless,
 	});
 
 	return browser;
