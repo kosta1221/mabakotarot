@@ -12,7 +12,7 @@ const { getDiffFromUrlAndPath } = require("../image-diff");
 
 const scrapePromises = (browser, ...sites) => {
 	return sites.map((site) => {
-		return retry(3, scrapePromiseForSite, browser, site);
+		return retry(5, scrapePromiseForSite, browser, site);
 	});
 };
 
@@ -23,7 +23,7 @@ const scrapePromiseForSite = async (browser, site) => {
 
 			try {
 				await page.goto(site.url, {
-					waitUntil: ["domcontentloaded"],
+					waitUntil: ["networkidle0"],
 					timeout: 15000,
 				});
 			} catch (error) {
