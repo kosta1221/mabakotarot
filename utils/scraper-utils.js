@@ -20,15 +20,28 @@ const scrapePromiseForSite = async (browser, site) => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			const page = await browser.newPage();
-			await page.goto(site.url, {
-				waitUntil: ["networkidle0", "load"],
-				timeout: 0,
-			});
+
+			try {
+				await page.goto(site.url, {
+					waitUntil: ["domcontentloaded"],
+					timeout: 15000,
+				});
+			} catch (error) {
+				if (page) {
+					page.close();
+				}
+				console.log("\x1b[31m%s\x1b[0m", `Site loading error for: ${site.folder}`);
+				throw error;
+			}
 
 			let scrapedTextsFromSite;
 			try {
 				scrapedTextsFromSite = await scrapeTextsFromSite(site, page, true, 3);
+				console.log("\x1b[31m%s\x1b[0m", `got texts from: ${site.folder}`);
 			} catch (error) {
+				if (page) {
+					page.close();
+				}
 				console.log("\x1b[31m%s\x1b[0m", `No texts scraped from: ${site.folder}`);
 				throw error;
 			}
@@ -47,10 +60,23 @@ const scrapePromiseForSite = async (browser, site) => {
 			);
 			const fileNameBasedOnDate = roundedDownDateByMinutesInterval.toFormat("yyyy-MM-dd_HH-mm");
 			const dateForDb = roundedDownDateByMinutesInterval.toFormat("yyyy-MM-dd HH:mm");
-			const path = `./headlines/${site.folder}/${fileNameBasedOnDate}.png`;
-			await page.screenshot({
-				path,
-			});
+			const path = `/tmp/${site.folder}_${fileNameBasedOnDate}.png`;
+
+			try {
+				await page.screenshot({
+					path,
+				});
+			} catch (error) {
+				if (page) {
+					page.close();
+				}
+				console.log("\x1b[31m%s\x1b[0m", `Couldn't take a screenshot from: ${site.folder}`);
+				throw error;
+			}
+
+			if (page) {
+				page.close();
+			}
 
 			resolve({
 				path,
