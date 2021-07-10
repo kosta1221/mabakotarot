@@ -28,7 +28,7 @@ const scrapePromiseForSite = async (browser, site) => {
 				});
 			} catch (error) {
 				if (page) {
-					page.close();
+					await page.close();
 				}
 				console.log("\x1b[31m%s\x1b[0m", `Site loading error for: ${site.folder}`);
 				throw error;
@@ -40,7 +40,7 @@ const scrapePromiseForSite = async (browser, site) => {
 				console.log("\x1b[31m%s\x1b[0m", `got texts from: ${site.folder}`);
 			} catch (error) {
 				if (page) {
-					page.close();
+					await page.close();
 				}
 				console.log("\x1b[31m%s\x1b[0m", `No texts scraped from: ${site.folder}`);
 				throw error;
@@ -68,14 +68,14 @@ const scrapePromiseForSite = async (browser, site) => {
 				});
 			} catch (error) {
 				if (page) {
-					page.close();
+					await page.close();
 				}
 				console.log("\x1b[31m%s\x1b[0m", `Couldn't take a screenshot from: ${site.folder}`);
 				throw error;
 			}
 
 			if (page) {
-				page.close();
+				await page.close();
 			}
 
 			resolve({
@@ -105,7 +105,7 @@ const uploadToS3AndMongoPromises = (scrapedHeadlinesChecked) => {
 					if (!foundHeadline) {
 						const S3URL = await uploadFileToS3(
 							scrapedHeadlineChecked.path,
-							scrapedHeadlineChecked.path.slice(12).replace("png", "webp")
+							`${site.folder}/${scrapedHeadlineChecked.fileName}.webp`
 						);
 
 						const newHeadline = await Headline.create({
