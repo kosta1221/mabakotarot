@@ -3,6 +3,7 @@ const fs = require("fs");
 const { uploadFileToS3 } = require("../s3/utils");
 
 const { retry } = require("../utils/retry");
+const timeout = require("../utils/sleep");
 
 const Headline = require("../db/models/Headline");
 const getRoundedDownDateByMinutesInterval = require("../screenshot-date-format");
@@ -23,8 +24,8 @@ const scrapePromiseForSite = async (browser, site) => {
 
 			try {
 				await page.goto(site.url, {
-					waitUntil: ["networkidle0"],
-					timeout: 15000,
+					waitUntil: ["networkidle2"],
+					timeout: 20000,
 				});
 			} catch (error) {
 				if (page) {
@@ -105,7 +106,7 @@ const uploadToS3AndMongoPromises = (scrapedHeadlinesChecked) => {
 					if (!foundHeadline) {
 						const S3URL = await uploadFileToS3(
 							scrapedHeadlineChecked.path,
-							`${site.folder}/${scrapedHeadlineChecked.fileName}.webp`
+							`${scrapedHeadlineChecked.site}/${scrapedHeadlineChecked.fileName}.webp`
 						);
 
 						const newHeadline = await Headline.create({

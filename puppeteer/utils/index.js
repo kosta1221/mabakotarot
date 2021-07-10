@@ -10,7 +10,7 @@ const launchBrowser = async () => {
 		args: chromium.args,
 		defaultViewport: { width: 1536, height: 754 },
 		executablePath: await chromium.executablePath,
-		headless: chromium.headless,
+		headless: true,
 	});
 
 	return browser;
