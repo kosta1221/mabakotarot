@@ -6,6 +6,8 @@ const AdblockerPlugin = require("puppeteer-extra-plugin-adblocker");
 puppeteerExtra.use(AdblockerPlugin());
 
 const launchBrowser = async () => {
+	await chromium.font("https://fontlibrary.org//face/liberation-sans");
+
 	const browser = await puppeteerExtra.launch({
 		args: chromium.args,
 		defaultViewport: { width: 1536, height: 754 },

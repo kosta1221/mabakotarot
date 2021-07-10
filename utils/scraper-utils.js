@@ -3,7 +3,6 @@ const fs = require("fs");
 const { uploadFileToS3 } = require("../s3/utils");
 
 const { retry } = require("../utils/retry");
-const timeout = require("../utils/sleep");
 
 const Headline = require("../db/models/Headline");
 const getRoundedDownDateByMinutesInterval = require("../screenshot-date-format");
