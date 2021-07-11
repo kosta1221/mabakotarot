@@ -3,12 +3,13 @@ const fs = require("fs");
 const { uploadFileToS3 } = require("../s3/utils");
 
 const { retry } = require("../utils/retry");
+const timeout = require("../utils/sleep");
 
 const Headline = require("../db/models/Headline");
-const getRoundedDownDateByMinutesInterval = require("../screenshot-date-format");
-const scrapeTextsFromSite = require("../scrape-texts");
+const getRoundedDownDateByMinutesInterval = require("./luxon/screenshot-date-format");
+const scrapeTextsFromSite = require("../utils/scrape-texts");
 const { getLastHeadlineOfSite } = require("../db/utils");
-const { getDiffFromUrlAndPath } = require("../image-diff");
+const { getDiffFromUrlAndPath } = require("./image-diff/image-diff");
 
 const scrapePromises = (browser, ...sites) => {
 	return sites.map((site) => {
@@ -32,6 +33,14 @@ const scrapePromiseForSite = async (browser, site) => {
 				}
 				console.log("\x1b[31m%s\x1b[0m", `Site loading error for: ${site.folder}`);
 				throw error;
+			}
+
+			if (process.env.TIMEOUT_AFTER_NAVIGATION_IN_SECONDS > 0) {
+				console.log(
+					`page loaded for ${site.folder}, now sleeping for ${process.env.TIMEOUT_AFTER_NAVIGATION_IN_SECONDS} seconds...`
+				);
+				await timeout(process.env.TIMEOUT_AFTER_NAVIGATION_IN_SECONDS * 1000);
+				console.log("finished sleep.");
 			}
 
 			let scrapedTextsFromSite;

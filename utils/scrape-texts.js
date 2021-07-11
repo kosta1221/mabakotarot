@@ -1,4 +1,4 @@
-const { retryWithTimeOut } = require("./utils/retry");
+const { retryWithTimeOut } = require("./retry");
 
 const scrapeTextsFromSite = async (site, page, shouldRetry = false, numOfRetries = 1) => {
 	const titleTextPromise = shouldRetry

@@ -4,3 +4,5 @@ headlines/
 ignore/
 *.zip
 tmp/
+local/
+README.md
