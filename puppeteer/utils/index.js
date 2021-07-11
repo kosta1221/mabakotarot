@@ -16,10 +16,13 @@ const launchBrowser = async () => {
 	await chromium.font("https://13news.co.il/wp-content/themes/reshet_tv/build/assets/fonts/Almoni/almoni-dl-aaa-400.woff");
 	await chromium.font("https://13news.co.il/wp-content/themes/reshet_tv/build/assets/fonts/Almoni/almoni-dl-aaa-700.woff");
 
+	const executablePath = await chromium.executablePath;
+	console.log("\x1b[35m%s\x1b[0m", `executable path: ${executablePath}`);
+
 	const browser = await puppeteerExtra.launch({
 		args: chromium.args,
 		defaultViewport: { width: 1536, height: 754 },
-		executablePath: await chromium.executablePath,
+		executablePath,
 		headless: true,
 	});
 
