@@ -1,16 +1,35 @@
+require("dotenv").config();
 const { retryWithTimeOut } = require("./retry");
 
 const scrapeTextsFromSite = async (site, page, shouldRetry = false, numOfRetries = 1) => {
 	const titleTextPromise = shouldRetry
-		? retryWithTimeOut(3000, numOfRetries, getTitleTextPromise, site, page)
+		? retryWithTimeOut(
+				process.env.RETRY_TIMEOUT_FOR_GET_TEXTS_IN_SECONDS * 1000,
+				numOfRetries,
+				getTitleTextPromise,
+				site,
+				page
+		  )
 		: getTitleTextPromise(site, page);
 
 	const subtitleTextPromise = shouldRetry
-		? retryWithTimeOut(3000, numOfRetries, getSubtitleTextPromise, site, page)
+		? retryWithTimeOut(
+				process.env.RETRY_TIMEOUT_FOR_GET_TEXTS_IN_SECONDS * 1000,
+				numOfRetries,
+				getSubtitleTextPromise,
+				site,
+				page
+		  )
 		: getSubtitleTextPromise(site, page);
 
 	const linkPromise = shouldRetry
-		? retryWithTimeOut(3000, numOfRetries, getLinkPromise, site, page)
+		? retryWithTimeOut(
+				process.env.RETRY_TIMEOUT_FOR_GET_TEXTS_IN_SECONDS * 1000,
+				numOfRetries,
+				getLinkPromise,
+				site,
+				page
+		  )
 		: getLinkPromise(site, page);
 
 	const [titleText, subtitleText, link] = await Promise.all([

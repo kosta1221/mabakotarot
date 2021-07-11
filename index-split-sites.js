@@ -92,7 +92,7 @@ exports.lambdaHandler = async (event) => {
 
 		for (let i = 0; i < split; i++) {
 			await retryWithTimeOut(
-				5000,
+				process.env.RETRY_TIMEOUT_FOR_MAIN_IN_SECONDS * 1000,
 				3,
 				main,
 				browser,
