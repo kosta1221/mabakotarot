@@ -5,6 +5,8 @@ const { n12, ynet, haaretz, walla, israelhayom, news13 } = require("./sites/inde
 
 const { retryWithTimeOut } = require("./utils/retry");
 
+const sites = [haaretz, walla, n12, ynet, israelhayom, news13];
+
 const {
 	scrapePromises,
 	uploadToS3AndMongoPromises,
@@ -76,6 +78,10 @@ const main = async (browser, ...sites) => {
 
 exports.lambdaHandler = async (event) => {
 	console.log("event: ", event);
+
+	const split = sites.length % process.env.SPLIT === 0 ? process.env.SPLIT : sites.length;
+	const sitesAtATime = sites.length / split;
+
 	try {
 		console.log("Launching in headless mode? -", process.env.IS_HEADLESS);
 		const browser = await retryWithTimeOut(5000, 5, launchBrowser);
@@ -84,9 +90,18 @@ exports.lambdaHandler = async (event) => {
 
 		await connectToMongo();
 
-		await retryWithTimeOut(5000, 3, main, browser, walla, haaretz);
-		await retryWithTimeOut(5000, 3, main, browser, n12, ynet);
-		await retryWithTimeOut(5000, 3, main, browser, israelhayom, news13);
+		for (let i = 0; i < split; i++) {
+			await retryWithTimeOut(
+				5000,
+				3,
+				main,
+				browser,
+				...sites.filter(
+					(site, siteIndex) =>
+						siteIndex < sitesAtATime * (i + 1) && siteIndex > sitesAtATime * i - 1
+				)
+			);
+		}
 
 		await closeBrowser(browser);
 		console.log("\x1b[36m%s\x1b[0m", "closed browser successfully.");
