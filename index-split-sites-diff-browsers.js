@@ -11,8 +11,12 @@ const {
 	checkAreScrapedHeadlinesUnique,
 } = require("./utils/scraper-utils");
 
-const main = async () => {
+const main = async (...sites) => {
 	console.log("Launching in headless mode? -", process.env.IS_HEADLESS);
+	console.log(
+		"\x1b[35m%s\x1b[0m",
+		`trying to scrape headlines from: ${sites.map((site) => site.folder).toString()}...`
+	);
 
 	let browser;
 	try {
@@ -28,9 +32,7 @@ const main = async () => {
 
 	let scraperHeadlines;
 	try {
-		scraperHeadlines = await Promise.all(
-			scrapePromises(browser, walla, haaretz, n12, ynet, israelhayom, news13)
-		);
+		scraperHeadlines = await Promise.all(scrapePromises(browser, ...sites));
 		console.log(
 			"\x1b[36m%s\x1b[0m",
 			"finished scraping headlines, trying to check scraped headlines' uniqueness..."
@@ -96,11 +98,24 @@ const main = async () => {
 	);
 };
 
-exports.lambdaHandler = async (event) => {
-	try {
-		await retryWithTimeOut(5000, 3, main);
-	} catch (error) {
-		console.log("\x1b[31m%s\x1b[0m", "SCRIPT UNSUCCESSFULL, EXITING WITH CODE 1");
-		process.exit(1);
-	}
-};
+// (async () => {
+// 	try {
+// 		await retryWithTimeOut(5000, 3, main, walla, haaretz);
+// 		await retryWithTimeOut(5000, 3, main, n12, ynet);
+// 		await retryWithTimeOut(5000, 3, main, israelhayom, news13);
+// 	} catch (error) {
+// 		console.log("\x1b[31m%s\x1b[0m", "SCRIPT UNSUCCESSFULL, EXITING WITH CODE 1");
+// 		process.exit(1);
+// 	}
+// })();
+
+// exports.lambdaHandler = async (event) => {
+// 	try {
+// 		await retryWithTimeOut(5000, 3, main, walla, haaretz);
+// 		await retryWithTimeOut(5000, 3, main, n12, ynet);
+// 		await retryWithTimeOut(5000, 3, main, israelhayom, news13);
+// 	} catch (error) {
+// 		console.log("\x1b[31m%s\x1b[0m", "SCRIPT UNSUCCESSFULL, EXITING WITH CODE 1");
+// 		process.exit(1);
+// 	}
+// };

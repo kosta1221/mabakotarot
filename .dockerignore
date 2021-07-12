@@ -1,6 +1,8 @@
 node_modules/
-.env
+lib/
 headlines/
 ignore/
 *.zip
 tmp/
+local/
+README.md
