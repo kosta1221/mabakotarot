@@ -6,7 +6,8 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"start": "node index.js",
-		"start:time": "time node index.js"
+		"start:time": "time node index.js",
+		"local": "node local/run-locally"
 	},
 	"author": "Kosta Kirov",
 	"license": "ISC",
