@@ -1,4 +1,5 @@
-require("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
 const { connectToMongo, disconnectFromMongo } = require("./db/mongo-connection");
 const { launchBrowser, closeBrowser } = require("./puppeteer/utils");
 const { n12, ynet, haaretz, walla, israelhayom, news13 } = require("./sites/index");
