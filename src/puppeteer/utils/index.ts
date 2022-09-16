@@ -6,7 +6,7 @@ import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
 import { logPurple } from "../../utils/console";
 puppeteerExtra.use(AdblockerPlugin());
 
-const launchBrowser = async () => {
+export const launchBrowser = async () => {
   // LiberationSans for walla
   await chromium.font(
     "https://rawcdn.githack.com/shantigilbert/liberation-fonts-ttf/ef7161f03e305982b0b247e9a0b7cc472376dd83/LiberationSans-Regular.ttf"
@@ -41,8 +41,6 @@ const launchBrowser = async () => {
   return browser;
 };
 
-const closeBrowser = async (browser) => {
+export const closeBrowser = async (browser) => {
   browser.close();
 };
-
-module.exports = { launchBrowser, closeBrowser };

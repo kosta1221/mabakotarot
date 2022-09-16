@@ -1,19 +1,17 @@
 import dotenv from "dotenv";
-import { logBlue, logGreen, logPurple, logRed } from "./utils/console";
 dotenv.config();
-const { connectToMongo, disconnectFromMongo } = require("./db/mongo-connection");
-const { launchBrowser, closeBrowser } = require("./puppeteer/utils");
-const { n12, ynet, haaretz, walla, israelhayom, news13 } = require("./sites/index");
-
-const { retryWithTimeOut } = require("./utils/retry");
-
-const sites = [haaretz, walla, n12, ynet, israelhayom];
-
-const {
+import { logBlue, logGreen, logPurple, logRed } from "./utils/console";
+import { connectToMongo, disconnectFromMongo } from "./db/mongo-connection";
+import { launchBrowser, closeBrowser } from "./puppeteer/utils";
+import { n12, ynet, haaretz, walla, israelhayom, news13 } from "./sites/index";
+import { retryWithTimeOut } from "./utils/retry";
+import {
   scrapePromises,
   uploadToS3AndMongoPromises,
   checkAreScrapedHeadlinesUnique,
-} = require("./utils/scraper-utils");
+} from "./utils/scraper-utils";
+
+const sites = [haaretz, walla, n12, ynet, israelhayom];
 
 const main = async (browser: any, ...sites: any[]) => {
   logPurple(`trying to scrape headlines from: ${sites.map((site) => site.folder).toString()}...`);
