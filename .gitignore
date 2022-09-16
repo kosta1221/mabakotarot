@@ -4,3 +4,5 @@ headlines/
 ignore/
 *.zip
 tmp/
+.vscode
+build

@@ -1,31 +1,40 @@
 {
-	"name": "mabakotarot",
-	"version": "1.0.0",
-	"description": "An app which is an archive of news headlines. ",
-	"main": "index.js",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"start": "node index.js",
-		"start:time": "time node index.js",
-		"local": "node local/run-locally"
-	},
-	"author": "Kosta Kirov",
-	"license": "ISC",
-	"dependencies": {
-		"aws-sdk": "^2.931.0",
-		"axios": "^0.21.1",
-		"buffer-image-size": "^0.6.4",
-		"chrome-aws-lambda": "^10.0.0",
-		"dotenv": "^10.0.0",
-		"luxon": "^1.27.0",
-		"mongoose": "^5.12.14",
-		"pixelmatch": "^5.2.1",
-		"puppeteer-core": "^10.0.0",
-		"puppeteer-extra": "^3.1.18",
-		"puppeteer-extra-plugin-adblocker": "^2.11.11",
-		"sharp": "^0.28.3"
-	},
-	"devDependencies": {
-		"puppeteer": "^10.1.0"
-	}
+  "name": "mabakotarot",
+  "version": "1.0.0",
+  "description": "An app which is an archive of news headlines. ",
+  "main": "build/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node build/index.js",
+    "start:time": "time node build/index.js",
+    "local": "ts-node src/local/run-locally"
+  },
+  "author": "Kosta Kirov",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.931.0",
+    "axios": "^0.21.1",
+    "buffer-image-size": "^0.6.4",
+    "chrome-aws-lambda": "^10.0.0",
+    "dotenv": "^10.0.0",
+    "luxon": "^1.28.0",
+    "mongoose": "^5.12.14",
+    "pixelmatch": "^5.2.1",
+    "pngjs": "^6.0.0",
+    "puppeteer-core": "^10.0.0",
+    "puppeteer-extra": "^3.3.4",
+    "puppeteer-extra-plugin-adblocker": "^2.11.11",
+    "sharp": "^0.28.3"
+  },
+  "devDependencies": {
+    "@types/luxon": "^3.0.1",
+    "@types/node": "^18.7.18",
+    "@types/pixelmatch": "^5.2.4",
+    "@types/pngjs": "^6.0.1",
+    "@types/sharp": "^0.30.5",
+    "puppeteer": "^10.1.0",
+    "ts-node": "^10.9.1",
+    "tslib": "^2.4.0",
+    "typescript": "^4.8.3"
+  }
 }

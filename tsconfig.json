@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "baseUrl": "/",
+    "importHelpers": true,
+    "allowJs": false,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "isolatedModules": false,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "noUnusedLocals": false,
+    "noFallthroughCasesInSwitch": true,
+    "declaration": true,
+    "stripInternal": true,
+    "strictNullChecks": true,
+    "downlevelIteration": true,
+    "lib": ["es6", "DOM"],
+    "moduleResolution": "node",
+    "outDir": "build",
+    "target": "es6",
+    "module": "commonjs",
+    "removeComments": true,
+    "incremental": true,
+    "skipLibCheck": true, // Fix conflict with node types: https://github.com/DefinitelyTyped/DefinitelyTyped/issues/16825
+    "plugins": [{ "name": "typescript-tslint-plugin" }],
+    "types": ["node"],
+    "paths": {
+      "*": ["src/typings/*"]
+    },
+    "resolveJsonModule": true,
+    "noEmit": false,
+    "sourceMap": true,
+    "inlineSources": true,
+    "sourceRoot": "/"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}
