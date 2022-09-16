@@ -1,13 +1,15 @@
+import { logPurple, logRed } from "./console";
+
 export const retry = async (numOfRetries, funcToRetry, ...args) => {
   try {
     return await funcToRetry(...args);
   } catch (err) {
     if (numOfRetries === 0) {
-      console.log("\x1b[31m%s\x1b[0m", `No retries left for ${funcToRetry.name}, throwing error`);
+      logRed(`No retries left for ${funcToRetry.name}, throwing error`);
       throw err;
     }
     console.log(`number of retries left for ${funcToRetry.name}: `, numOfRetries - 1);
-    console.log("\x1b[35m%s\x1b[0m", `retrying ${funcToRetry.name}...`);
+    logPurple(`retrying ${funcToRetry.name}...`);
     return await retry(numOfRetries - 1, funcToRetry, ...args);
   }
 };
@@ -17,7 +19,7 @@ export const retryWithTimeOut = async (timeOutMs, numOfRetries, funcToRetry, ...
     return await funcToRetry(...args);
   } catch (err) {
     if (numOfRetries === 0) {
-      console.log("\x1b[31m%s\x1b[0m", `No retries left for ${funcToRetry.name}, throwing error`);
+      logRed(`No retries left for ${funcToRetry.name}, throwing error`);
       throw err;
     }
     console.log(`number of retries left for ${funcToRetry.name}: `, numOfRetries - 1);
@@ -34,7 +36,7 @@ export const retryWithTimeOut = async (timeOutMs, numOfRetries, funcToRetry, ...
       }
     });
 
-    console.log("\x1b[35m%s\x1b[0m", `retrying ${funcToRetry.name}...`);
+    logPurple(`retrying ${funcToRetry.name}...`);
     return retryWithTimeOut(timeOutMs, numOfRetries - 1, funcToRetry, ...args);
   }
 };

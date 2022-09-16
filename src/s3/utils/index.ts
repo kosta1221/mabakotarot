@@ -2,6 +2,7 @@ require("dotenv").config();
 import fs from "fs";
 import AWS from "aws-sdk";
 import sharp from "sharp";
+import { logRed } from "../../utils/console";
 
 const s3 = new AWS.S3({
   accessKeyId: process.env.S3_ACCESS_KEY_ID,
@@ -30,7 +31,7 @@ export const uploadFileToS3 = async (filePath, s3Path) => {
           if (err) {
             throw err;
           }
-          console.log("\x1b[31m%s\x1b[0m", `File uploaded successfully. ${data.Location}`);
+          logRed(`File uploaded successfully. ${data.Location}`);
           resolve(data.Location);
         });
       } catch (error) {

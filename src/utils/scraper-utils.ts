@@ -9,6 +9,7 @@ import { getRoundedDownDateByMinutesInterval } from "./luxon/screenshot-date-for
 import { scrapeTextsFromSite } from "./scrape-texts";
 import { getLastHeadlineOfSite } from "../db/utils";
 import { getDiffFromUrlAndPath } from "./image-diff/image-diff";
+import { logRed } from "./console";
 
 export const scrapePromises = (browser, ...sites) => {
   return sites.map((site) => {
@@ -30,7 +31,7 @@ const scrapePromiseForSite = async (browser, site) => {
         if (page) {
           await page.close();
         }
-        console.log("\x1b[31m%s\x1b[0m", `Site loading error for: ${site.folder}`);
+        logRed(`Site loading error for: ${site.folder}`);
         throw error;
       }
 
@@ -45,12 +46,12 @@ const scrapePromiseForSite = async (browser, site) => {
       let scrapedTextsFromSite;
       try {
         scrapedTextsFromSite = await scrapeTextsFromSite(site, page, true, 3);
-        console.log("\x1b[31m%s\x1b[0m", `got texts from: ${site.folder}`);
+        logRed(`got texts from: ${site.folder}`);
       } catch (error) {
         if (page) {
           await page.close();
         }
-        console.log("\x1b[31m%s\x1b[0m", `No texts scraped from: ${site.folder}`);
+        logRed(`No texts scraped from: ${site.folder}`);
         throw error;
       }
 
@@ -78,7 +79,7 @@ const scrapePromiseForSite = async (browser, site) => {
         if (page) {
           await page.close();
         }
-        console.log("\x1b[31m%s\x1b[0m", `Couldn't take a screenshot from: ${site.folder}`);
+        logRed(`Couldn't take a screenshot from: ${site.folder}`);
         throw error;
       }
 

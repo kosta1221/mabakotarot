@@ -3,6 +3,7 @@ import { addExtra } from "puppeteer-extra";
 //@ts-ignore
 const puppeteerExtra = addExtra(chromium.puppeteer);
 import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
+import { logPurple } from "../../utils/console";
 puppeteerExtra.use(AdblockerPlugin());
 
 const launchBrowser = async () => {
@@ -28,7 +29,7 @@ const launchBrowser = async () => {
   );
 
   const executablePath = await chromium.executablePath;
-  console.log("\x1b[35m%s\x1b[0m", `executable path: ${executablePath}`);
+  logPurple(`executable path: ${executablePath}`);
 
   const browser = await puppeteerExtra.launch({
     args: chromium.args,
