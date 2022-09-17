@@ -11,10 +11,10 @@ RUN npm ci --only=prod
 FROM base AS build
 
 COPY . .
-RUN npm ci
+RUN NODE_ENV=development npm install --only=dev
 RUN npm run build
 
 FROM base AS final
 
 COPY --from=build /${LAMBDA_TASK_ROOT}/build /${LAMBDA_TASK_ROOT}/build
-CMD [ "index.lambdaHandler" ]
+CMD [ "build/index.lambdaHandler" ]
